@@ -21,8 +21,8 @@ public final class DatabaseUpdateFunctions {
     /**
      * Returns a function which performs a SQL update on the database.
      *
-     * @param preparedStatementFactory Creates the update statement using the given {@link Connection}.
-     * @return A Function returning an {@link Integer} value.
+     * @param preparedStatementFactory Creates the update statement using a given {@link Connection}.
+     * @return A Function performing the update and returning an {@link Integer} value.
      */
     public static Function<Connection, Integer> databaseUpdate(final Function<Connection, PreparedStatement> preparedStatementFactory) {
         return connection -> performUpdateOnConnection(connection, preparedStatementFactory);
@@ -35,10 +35,15 @@ public final class DatabaseUpdateFunctions {
         }
     }
 
+    /**
+     * Returns a function which performs multiple SQL update on the database.
+     *
+     * @param preparedStatementFactories List of {@link PreparedStatement} factories creating update statements using a given {@link Connection}.
+     * @return A Function performing the updates and returning an {@code int[]} array value with the number of the updates rows per update.
+     */
     public static Function<Connection, int[]> multipleDatabaseUpdates(final Collection<Function<Connection, PreparedStatement>> preparedStatementFactories) {
         return connection -> performUpdatesOnConnection(connection, preparedStatementFactories);
     }
-
     private static int[] performUpdatesOnConnection(final Connection connection, final Collection<Function<Connection, PreparedStatement>> preparedStatementFactories) throws SQLException {
         int[] result = new int[preparedStatementFactories.size()];
         int currentIndex = 0;
