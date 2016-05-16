@@ -9,7 +9,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
-import static de.henninglanghorst.functional.sql.DatabaseOperations.*;
+import static de.henninglanghorst.functional.sql.DatabaseOperations.statement;
+import static de.henninglanghorst.functional.sql.DatabaseQueryFunctions.*;
+import static de.henninglanghorst.functional.sql.DatabaseTransactionFunctions.withinTransaction;
+import static de.henninglanghorst.functional.sql.DatabaseUpdateFunctions.databaseUpdate;
+import static de.henninglanghorst.functional.sql.DatabaseUpdateFunctions.multipleDatabaseUpdates;
 import static java.util.Arrays.asList;
 
 /**
@@ -45,17 +49,16 @@ public final class PersonDbFunctions {
                 ));
     }
 
-
     public static Function<Connection, List<Person>> selectAllPersons() {
         return databaseQuery(
                 statement("select * from Person"),
-                PersonDbFunctions::mapResultSetToPerson);
+                multipleRowExtraction(PersonDbFunctions::mapResultSetToPerson));
     }
 
     public static Function<Connection, Person> selectPersonWithId(int id) {
-        return databaseQuerySingleRow(
+        return databaseQuery(
                 statement("select * from Person where id = ?", id),
-                PersonDbFunctions::mapResultSetToPerson);
+                singleRowExtraction(PersonDbFunctions::mapResultSetToPerson));
     }
 
     private static Person mapResultSetToPerson(final ResultSet resultSet) throws SQLException {

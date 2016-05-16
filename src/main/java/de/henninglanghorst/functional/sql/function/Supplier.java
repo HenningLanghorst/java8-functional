@@ -3,7 +3,7 @@ package de.henninglanghorst.functional.sql.function;
 import java.sql.SQLException;
 
 /**
- * Provides an Object of type {@link T}.
+ * Provides an Object of type {@link T} and is able to throw {@link SQLException}s.
  *
  * @author Henning Langhorst
  */
