@@ -2,6 +2,7 @@ package de.henninglanghorst.functional;
 
 import de.henninglanghorst.functional.model.Person;
 import de.henninglanghorst.functional.sql.function.Supplier;
+import de.henninglanghorst.functional.util.Either;
 import org.h2.jdbcx.JdbcConnectionPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,28 +35,36 @@ public class Main {
 
         final Supplier<Connection> connectionFactory = connectionPool::getConnection;
 
-        doInDatabase(connectionFactory, dropTablePerson())
-                .handleResult(objects -> LOGGER.info("Success " + objects), Main::logError);
+        final Either<Integer, SQLException> dropTableResult = doInDatabase(connectionFactory, dropTablePerson());
+        dropTableResult.handleResult(objects -> LOGGER.info("Success " + objects), Main::logError);
 
-        doInDatabase(connectionFactory, createTablePerson())
-                .handleResult(objects -> LOGGER.info("Success " + objects), Main::logError);
+        final Either<Integer, SQLException> createTableResult = doInDatabase(connectionFactory, createTablePerson());
+        createTableResult.handleResult(objects -> LOGGER.info("Success " + objects), Main::logError);
 
-        doInDatabase(connectionFactory,
+        final Either<int[], SQLException> insertPersonsResult = doInDatabase(
+                connectionFactory,
                 withinTransaction(
                         insertPersons(
                                 new Person(1, "Carl", "Carlsson", LocalDate.of(1972, Month.APRIL, 2)),
                                 new Person(2, "Lenny", "Leonard", LocalDate.of(1981, Month.APRIL, 2))
-                        )))
-                .handleResult(
+                        )));
+        insertPersonsResult.handleResult(
                         objects -> LOGGER.info("Inserted rows: " + Arrays.toString(objects)),
                         Main::logError);
 
-        doInDatabase(connectionFactory, selectAllPersons())
-                .handleResult(persons -> LOGGER.info("All Persons selected:" + listToString(persons)), Main::logError);
+        final Either<List<Person>, SQLException> selectAllPersonsResult =
+                doInDatabase(
+                        connectionFactory,
+                        selectAllPersons());
+        selectAllPersonsResult.handleResult(
+                persons -> LOGGER.info("All Persons selected:" + listToString(persons)),
+                Main::logError);
 
 
-        doInDatabase(connectionFactory, selectPersonWithId(1))
-                .handleResult(person -> LOGGER.info("Person with Id 1 selected: " + person), Main::logError);
+        final Either<Person, SQLException> selectPersonWithId1Result = doInDatabase(connectionFactory, selectPersonWithId(1));
+        selectPersonWithId1Result.handleResult(
+                person -> LOGGER.info("Person with Id 1 selected: " + person),
+                Main::logError);
 
 
         connectionPool.dispose();
