@@ -51,23 +51,64 @@ public final class DatabaseOperations {
      */
     public static <R> Function<Connection, List<R>> databaseQuery(final Function<Connection, PreparedStatement> preparedStatementFactory,
                                                                   final Function<ResultSet, R> resultSetMapper) {
-        return connection -> performQueryOnConnection(connection, preparedStatementFactory, resultSetMapper);
+        return connection -> performQueryOnConnection(connection, preparedStatementFactory, multipleRowExtraction(resultSetMapper));
     }
 
-    private static <R> List<R> performQueryOnConnection(final Connection connection,
-                                                        final Function<Connection, PreparedStatement> preparedStatementFactory,
-                                                        final Function<ResultSet, R> resultSetMapper) throws SQLException {
+    private static <R> R performQueryOnConnection(final Connection connection,
+                                                  final Function<Connection, PreparedStatement> preparedStatementFactory,
+                                                  final Function<ResultSet, R> resultSetMapper) throws SQLException {
         try (PreparedStatement preparedStatement = preparedStatementFactory.apply(connection)) {
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                List<R> result = new ArrayList<>();
-                while (resultSet.next()) {
-                    final R entry = resultSetMapper.apply(resultSet);
-                    result.add(entry);
-                }
-                return result;
+                return resultSetMapper.apply(resultSet);
             }
         }
     }
+
+    private static <R> Function<ResultSet, List<R>> multipleRowExtraction(final Function<ResultSet, R> resultSetMapper) {
+        return resultSet -> extractRowsFromResultSet(resultSet, resultSetMapper);
+    }
+
+    private static <R> List<R> extractRowsFromResultSet(final ResultSet resultSet, final Function<ResultSet, R> resultSetMapper) throws SQLException {
+        List<R> result = new ArrayList<>();
+        while (resultSet.next()) {
+            final R entry = resultSetMapper.apply(resultSet);
+            result.add(entry);
+        }
+        return result;
+    }
+
+
+    /**
+     * Returns a function which performs a SQL query for a single row on the database for use
+     * in {@link #doInDatabase(Supplier, Function)}.
+     *
+     * @param preparedStatementFactory Creates the select statement using the given {@link Connection}.
+     * @param resultSetMapper          Maps the the {@link ResultSet} entries to a specific type.
+     * @param <R>                      Type to which every {@link ResultSet} entry is mapped.
+     * @return A Function returning a List with Elements of typ {@link R}.
+     */
+    public static <R> Function<Connection, R> databaseQuerySingleRow(final Function<Connection, PreparedStatement> preparedStatementFactory,
+                                                                     final Function<ResultSet, R> resultSetMapper) {
+        return connection -> performQueryOnConnection(connection, preparedStatementFactory, singleRowExtraction(resultSetMapper));
+    }
+
+    private static <R> Function<ResultSet, R> singleRowExtraction(final Function<ResultSet, R> resultSetMapper) {
+        return resultSet -> extractSingleRowFromResultSet(resultSet, resultSetMapper);
+    }
+
+
+    private static <R> R extractSingleRowFromResultSet(final ResultSet resultSet, final Function<ResultSet, R> resultSetMapper) throws SQLException {
+        if (!resultSet.next()) {
+            throw new SQLException("No data found");
+        }
+        final R entry = resultSetMapper.apply(resultSet);
+        if (resultSet.next()) {
+            throw new SQLException("More than one record in result");
+        }
+        return entry;
+
+    }
+
 
     /**
      * Returns a function which performs a SQL update on the database.
