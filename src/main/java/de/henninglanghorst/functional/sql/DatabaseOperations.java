@@ -54,7 +54,8 @@ public final class DatabaseOperations {
         return connection -> performQueryOnConnection(connection, preparedStatementFactory, resultSetMapper);
     }
 
-    private static <R> List<R> performQueryOnConnection(final Connection connection, final Function<Connection, PreparedStatement> preparedStatementFactory,
+    private static <R> List<R> performQueryOnConnection(final Connection connection,
+                                                        final Function<Connection, PreparedStatement> preparedStatementFactory,
                                                         final Function<ResultSet, R> resultSetMapper) throws SQLException {
         try (PreparedStatement preparedStatement = preparedStatementFactory.apply(connection)) {
             try (ResultSet resultSet = preparedStatement.executeQuery()) {

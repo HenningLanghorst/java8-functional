@@ -1,18 +1,19 @@
 package de.henninglanghorst.functional;
 
 import de.henninglanghorst.functional.model.Person;
-import de.henninglanghorst.functional.util.Either;
+import de.henninglanghorst.functional.sql.function.Supplier;
 import org.h2.jdbcx.JdbcConnectionPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.sql.Date;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
 
-import static de.henninglanghorst.functional.sql.DatabaseOperations.*;
-import static java.util.Arrays.asList;
+import static de.henninglanghorst.functional.PersonDbFunctions.*;
+import static de.henninglanghorst.functional.sql.DatabaseOperations.doInDatabase;
+import static java.util.stream.Collectors.joining;
 
 /**
  * Example program.
@@ -26,48 +27,39 @@ public class Main {
 
     public static void main(String[] args) {
 
-        final JdbcConnectionPool cp = JdbcConnectionPool.create("jdbc:h2:~/testdb", "sa", "");
+        final JdbcConnectionPool connectionPool = JdbcConnectionPool.create("jdbc:h2:~/testdb", "sa", "");
 
-        doInDatabase(cp::getConnection, databaseUpdate(statement("drop table Person")))
+        final Supplier<Connection> connectionFactory = connectionPool::getConnection;
+
+        doInDatabase(connectionFactory, dropTablePerson())
                 .handleResult(objects -> LOGGER.info("Success " + objects), Main::logError);
 
-        doInDatabase(
-                cp::getConnection,
-                withinTransaction(
-                        databaseUpdate(
-                                statement("create table Person (id integer primary key, firstName varchar2, lastName varchar2, birthday date)"))))
+        doInDatabase(connectionFactory, createTablePerson())
                 .handleResult(objects -> LOGGER.info("Success " + objects), Main::logError);
 
-        doInDatabase(cp::getConnection, multipleDatabaseUpdates(
-                asList(
-                        statement(
-                                "insert into Person values (?, ?, ?, ?);",
-                                1, "Carl", "Carlsson", Date.valueOf("1972-04-02")),
-                        statement("insert into Person values (?, ?, ?, ?);",
-                                2, "Lenny", "Leonard", Date.valueOf("1981-04-02")))
-                )
-        ).handleResult(
+        doInDatabase(connectionFactory, insertPersons())
+                .handleResult(
                 objects -> LOGGER.info("Inserted rows: " + Arrays.toString(objects)),
                 Main::logError);
 
+        doInDatabase(connectionFactory, selectAllPersons())
+                .handleResult(persons -> LOGGER.info("All Persons selected:" + listToString(persons)), Main::logError);
 
 
-        final Either<List<Person>, SQLException> result = doInDatabase(
-                cp::getConnection,
-                databaseQuery(
-                        statement("select * from Person where id = ?", 1),
-                        resultSet -> new Person(
-                                resultSet.getInt("id"),
-                                resultSet.getString("firstName"),
-                                resultSet.getString("lastName"),
-                                resultSet.getDate("birthday").toLocalDate())));
+        doInDatabase(connectionFactory, selectPersonWithId(1))
+                .handleResult(persons -> LOGGER.info("Person with Id 1 selected:" + listToString(persons)), Main::logError);
 
 
-        LOGGER.info("DB Result: " + result.left());
+        connectionPool.dispose();
     }
+
 
     private static void logError(final SQLException e) {
         LOGGER.error("Error during database operation", e);
+    }
+
+    private static String listToString(final List<Person> persons) {
+        return persons.stream().map(Object::toString).collect(joining("\n        ", "\nPersons ", ""));
     }
 
 
