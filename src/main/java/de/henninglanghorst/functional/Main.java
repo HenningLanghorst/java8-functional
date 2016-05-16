@@ -47,7 +47,7 @@ public class Main {
 
 
         doInDatabase(connectionFactory, selectPersonWithId(1))
-                .handleResult(persons -> LOGGER.info("Person with Id 1 selected:" + listToString(persons)), Main::logError);
+                .handleResult(person -> LOGGER.info("Person with Id 1 selected: " + person), Main::logError);
 
 
         connectionPool.dispose();

@@ -54,8 +54,8 @@ public final class PersonDbFunctions {
                         resultSet.getDate("birthday").toLocalDate()));
     }
 
-    public static Function<Connection, List<Person>> selectPersonWithId(int id) {
-        return databaseQuery(
+    public static Function<Connection, Person> selectPersonWithId(int id) {
+        return databaseQuerySingleRow(
                 statement("select * from Person where id = ?", id),
                 resultSet -> new Person(
                         resultSet.getInt("id"),
