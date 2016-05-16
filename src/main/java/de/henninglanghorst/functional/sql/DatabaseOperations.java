@@ -128,19 +128,18 @@ public final class DatabaseOperations {
         }
     }
 
-    public static Function<Connection, int[]> multipleDatabaseUpdates(final Collection< Function<Connection, PreparedStatement>> preparedStatementFactories) {
+    public static Function<Connection, int[]> multipleDatabaseUpdates(final Collection<Function<Connection, PreparedStatement>> preparedStatementFactories) {
         return connection -> performUpdatesOnConnection(connection, preparedStatementFactories);
     }
 
     private static int[] performUpdatesOnConnection(final Connection connection, final Collection<Function<Connection, PreparedStatement>> preparedStatementFactories) throws SQLException {
         int[] result = new int[preparedStatementFactories.size()];
         int currentIndex = 0;
-        for (Function<Connection, PreparedStatement> f : preparedStatementFactories){
+        for (Function<Connection, PreparedStatement> f : preparedStatementFactories) {
             result[currentIndex++] = performUpdateOnConnection(connection, f);
         }
         return result;
     }
-
 
 
     /**

@@ -39,8 +39,8 @@ public class Main {
 
         doInDatabase(connectionFactory, insertPersons())
                 .handleResult(
-                objects -> LOGGER.info("Inserted rows: " + Arrays.toString(objects)),
-                Main::logError);
+                        objects -> LOGGER.info("Inserted rows: " + Arrays.toString(objects)),
+                        Main::logError);
 
         doInDatabase(connectionFactory, selectAllPersons())
                 .handleResult(persons -> LOGGER.info("All Persons selected:" + listToString(persons)), Main::logError);

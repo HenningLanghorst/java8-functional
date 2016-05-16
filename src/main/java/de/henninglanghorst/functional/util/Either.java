@@ -11,6 +11,14 @@ import java.util.function.Consumer;
 public abstract class Either<A, B> {
 
 
+    public static <A, B> Either<A, B> left(A value) {
+        return new Left<>(value);
+    }
+
+    public static <A, B> Either<A, B> right(B value) {
+        return new Right<>(value);
+    }
+
     public abstract boolean isLeft();
 
     public abstract boolean isRight();
@@ -20,15 +28,6 @@ public abstract class Either<A, B> {
     public abstract Optional<B> right();
 
     public abstract void handleResult(Consumer<A> leftConsumer, Consumer<B> rightConsumer);
-
-    public static <A, B> Either<A, B> left(A value) {
-        return new Left<>(value);
-    }
-
-    public static <A, B> Either<A, B> right(B value) {
-        return new Right<>(value);
-    }
-
 
     private static class Left<A, B> extends Either<A, B> {
 

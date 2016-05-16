@@ -4,7 +4,7 @@ import java.sql.SQLException;
 
 /**
  * Interface for method accepting one Object of type {@link T} which can throw an {@link SQLException}.
- *
+ * <p/>
  * Created by henning on 15.05.16.
  */
 public interface Consumer<T> {
