@@ -3,6 +3,8 @@ package de.henninglanghorst.functional;
 import de.henninglanghorst.functional.model.Person;
 import de.henninglanghorst.functional.util.Either;
 import org.h2.jdbcx.JdbcConnectionPool;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Date;
 import java.sql.SQLException;
@@ -19,19 +21,22 @@ import static java.util.Arrays.asList;
  */
 public class Main {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
+
+
     public static void main(String[] args) {
 
         final JdbcConnectionPool cp = JdbcConnectionPool.create("jdbc:h2:~/testdb", "sa", "");
 
         doInDatabase(cp::getConnection, databaseUpdate(statement("drop table Person")))
-                .handleResult(objects -> System.out.println("Success " + objects), Throwable::printStackTrace);
+                .handleResult(objects -> LOGGER.info("Success " + objects), Main::logError);
 
         doInDatabase(
                 cp::getConnection,
                 withinTransaction(
                         databaseUpdate(
                                 statement("create table Person (id integer primary key, firstName varchar2, lastName varchar2, birthday date)"))))
-                .handleResult(objects -> System.out.println("Success " + objects), Throwable::printStackTrace);
+                .handleResult(objects -> LOGGER.info("Success " + objects), Main::logError);
 
         doInDatabase(cp::getConnection, multipleDatabaseUpdates(
                 asList(
@@ -42,8 +47,8 @@ public class Main {
                                 2, "Lenny", "Leonard", Date.valueOf("1981-04-02")))
                 )
         ).handleResult(
-                objects -> System.out.println("Inserted rows: " + Arrays.toString(objects)),
-                Throwable::printStackTrace);
+                objects -> LOGGER.info("Inserted rows: " + Arrays.toString(objects)),
+                Main::logError);
 
 
 
@@ -58,7 +63,11 @@ public class Main {
                                 resultSet.getDate("birthday").toLocalDate())));
 
 
-        System.out.println(result.left().get());
+        LOGGER.info("DB Result: " + result.left());
+    }
+
+    private static void logError(final SQLException e) {
+        LOGGER.error("Error during database operation", e);
     }
 
 
