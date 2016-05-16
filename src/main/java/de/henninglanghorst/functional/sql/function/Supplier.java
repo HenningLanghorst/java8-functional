@@ -7,6 +7,7 @@ import java.sql.SQLException;
  *
  * @author Henning Langhorst
  */
+@FunctionalInterface
 public interface Supplier<T> {
     T get() throws SQLException;
 }

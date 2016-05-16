@@ -7,6 +7,7 @@ import java.sql.SQLException;
  * <p/>
  * Created by henning on 15.05.16.
  */
+@FunctionalInterface
 public interface Consumer<T> {
     void accept(T t) throws SQLException;
 }
