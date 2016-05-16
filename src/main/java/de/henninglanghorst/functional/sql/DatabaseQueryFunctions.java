@@ -24,9 +24,9 @@ public final class DatabaseQueryFunctions {
      * Returns a function which performs a SQL query on the database for use in {@link DatabaseOperations#doInDatabase(Supplier, Function)}.
      *
      * @param preparedStatementFactory Creates the select statement using the given {@link Connection}.
-     * @param resultSetExtraction      Function for extracting data from {@link ResultSet}.
-     * @param <R>                      Type to which every {@link ResultSet} entry is mapped.
-     * @return A Function returning a List with Elements of typ {@link R}.
+     * @param resultSetExtraction      Function extracting data from {@link ResultSet}.
+     * @param <R>                      Type to which the {@link ResultSet} is mapped.
+     * @return A Function returning a List of Elements of type {@link R}.
      */
     public static <R> Function<Connection, R> databaseQuery(final Function<Connection, PreparedStatement> preparedStatementFactory,
                                                             final Function<ResultSet, R> resultSetExtraction) {
@@ -43,6 +43,13 @@ public final class DatabaseQueryFunctions {
         }
     }
 
+    /**
+     * Creates a function which extracts data from a {@link ResultSet} using a given mapper function.
+     *
+     * @param resultSetMapper Function used for extracting single data records from {@link ResultSet}.
+     * @param <R>             Type to which every {@link ResultSet} entry is mapped.
+     * @return A Function returning multiple elements of type {@link R} from the {@link ResultSet}.
+     */
     public static <R> Function<ResultSet, List<R>> multipleRowExtraction(final Function<ResultSet, R> resultSetMapper) {
         return resultSet -> extractRowsFromResultSet(resultSet, resultSetMapper);
     }
@@ -56,6 +63,13 @@ public final class DatabaseQueryFunctions {
         return result;
     }
 
+    /**
+     * Creates a function which extracts one data record from a {@link ResultSet} using a given mapper function.
+     *
+     * @param resultSetMapper Function used for extracting a single data record from {@link ResultSet}.
+     * @param <R>             Type to which the {@link ResultSet} row is mapped.
+     * @return A Function returning a single element of type {@link R} from the {@link ResultSet}.
+     */
     public static <R> Function<ResultSet, R> singleRowExtraction(final Function<ResultSet, R> resultSetMapper) {
         return resultSet -> extractSingleRowFromResultSet(resultSet, resultSetMapper);
     }
