@@ -50,9 +50,11 @@ public final class DatabaseOperations {
 
 
     /**
-     * * Returns a function creating a {@link PreparedStatement} with given the SQL statement and parameters from a {@link Connection}.
+     * Returns a function creating a {@link PreparedStatement} with given the SQL statement and parameters from a
+     * {@link Connection}.
      *
-     * @param sql        SQL statement to be used in {@link Connection#prepareStatement(String)} when preparing the statement.
+     * @param sql        SQL statement to be used in {@link Connection#prepareStatement(String)} when preparing the
+     *                   statement.
      * @param parameters Parameters to be set on {@link PreparedStatement}.
      * @return Function preparing a statement from a connection.
      */
