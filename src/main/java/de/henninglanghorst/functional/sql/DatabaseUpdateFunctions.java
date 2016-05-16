@@ -40,13 +40,14 @@ public final class DatabaseUpdateFunctions {
     /**
      * Returns a function which performs multiple SQL update on the database.
      *
-     * @param psFactories List of {@link PreparedStatement} factories creating update statements using a
+     * @param preparedStatementFactories List of {@link PreparedStatement} factories creating update statements using a
      *                                   given {@link Connection}.
      * @return A Function performing the updates and returning an {@code int[]} array value with the number of the
      * updates rows per update.
      */
-    public static Function<Connection, int[]> multipleDatabaseUpdates(final Collection<Function<Connection, PreparedStatement>> psFactories) {
-        return connection -> performUpdatesOnConnection(connection, psFactories);
+    public static Function<Connection, int[]> multipleDatabaseUpdates(
+            final Collection<Function<Connection, PreparedStatement>> preparedStatementFactories) {
+        return connection -> performUpdatesOnConnection(connection, preparedStatementFactories);
     }
 
     private static int[] performUpdatesOnConnection(final Connection connection,
