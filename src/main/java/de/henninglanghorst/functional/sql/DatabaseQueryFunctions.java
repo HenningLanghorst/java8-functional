@@ -21,16 +21,17 @@ public final class DatabaseQueryFunctions {
     }
 
     /**
-     * Returns a function which performs a SQL query on the database for use in {@link DatabaseOperations#doInDatabase(Supplier, Function)}.
+     * Returns a function which performs a SQL query on the database for use in
+     * {@link DatabaseOperations#doInDatabase(Supplier, Function)}.
      *
-     * @param preparedStatementFactory Creates the select statement using the given {@link Connection}.
+     * @param prepStmtFactory Creates the select statement using the given {@link Connection}.
      * @param resultSetExtraction      Function extracting data from {@link ResultSet}.
      * @param <R>                      Type to which the {@link ResultSet} is mapped.
      * @return A Function returning a List of Elements of type {@link R}.
      */
-    public static <R> Function<Connection, R> databaseQuery(final Function<Connection, PreparedStatement> preparedStatementFactory,
+    public static <R> Function<Connection, R> databaseQuery(final Function<Connection, PreparedStatement> prepStmtFactory,
                                                             final Function<ResultSet, R> resultSetExtraction) {
-        return connection -> performQueryOnConnection(connection, preparedStatementFactory, resultSetExtraction);
+        return connection -> performQueryOnConnection(connection, prepStmtFactory, resultSetExtraction);
     }
 
     private static <R> R performQueryOnConnection(final Connection connection,
@@ -54,7 +55,8 @@ public final class DatabaseQueryFunctions {
         return resultSet -> extractRowsFromResultSet(resultSet, resultSetMapper);
     }
 
-    private static <R> List<R> extractRowsFromResultSet(final ResultSet resultSet, final Function<ResultSet, R> resultSetMapper) throws SQLException {
+    private static <R> List<R> extractRowsFromResultSet(final ResultSet resultSet,
+                                                        final Function<ResultSet, R> resultSetMapper) throws SQLException {
         List<R> result = new ArrayList<>();
         while (resultSet.next()) {
             final R entry = resultSetMapper.apply(resultSet);
@@ -74,7 +76,8 @@ public final class DatabaseQueryFunctions {
         return resultSet -> extractSingleRowFromResultSet(resultSet, resultSetMapper);
     }
 
-    private static <R> R extractSingleRowFromResultSet(final ResultSet resultSet, final Function<ResultSet, R> resultSetMapper) throws SQLException {
+    private static <R> R extractSingleRowFromResultSet(final ResultSet resultSet,
+                                                       final Function<ResultSet, R> resultSetMapper) throws SQLException {
         if (!resultSet.next()) {
             throw new SQLException("No data found");
         }
