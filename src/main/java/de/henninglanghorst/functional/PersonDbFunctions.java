@@ -38,11 +38,11 @@ public final class PersonDbFunctions {
         return
                 multipleDatabaseUpdates(
                         Stream.of(persons)
-                                .map(PersonDbFunctions::mapPersonToInsertStatement)
+                                .map(PersonDbFunctions::insertPerson)
                                 .collect(toList()));
     }
 
-    private static Function<Connection, PreparedStatement> mapPersonToInsertStatement(final Person person) {
+    private static Function<Connection, PreparedStatement> insertPerson(final Person person) {
         return statement("insert into Person values (?, ?, ?, ?);",
                 person.getId(),
                 person.getFirstName(),
