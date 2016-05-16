@@ -31,17 +31,17 @@ public class Main {
 
     public static void main(String[] args) {
 
-        final JdbcConnectionPool connectionPool = JdbcConnectionPool.create("jdbc:h2:~/testdb", "sa", "");
+        JdbcConnectionPool connectionPool = JdbcConnectionPool.create("jdbc:h2:~/testdb", "sa", "");
 
-        final Supplier<Connection> connectionFactory = connectionPool::getConnection;
+        Supplier<Connection> connectionFactory = connectionPool::getConnection;
 
-        final Either<Integer, SQLException> dropTableResult = doInDatabase(connectionFactory, dropTablePerson());
+        Either<Integer, SQLException> dropTableResult = doInDatabase(connectionFactory, dropTablePerson());
         dropTableResult.handleResult(objects -> LOGGER.info("Success " + objects), Main::logError);
 
-        final Either<Integer, SQLException> createTableResult = doInDatabase(connectionFactory, createTablePerson());
+        Either<Integer, SQLException> createTableResult = doInDatabase(connectionFactory, createTablePerson());
         createTableResult.handleResult(objects -> LOGGER.info("Success " + objects), Main::logError);
 
-        final Either<int[], SQLException> insertPersonsResult = doInDatabase(
+        Either<int[], SQLException> insertPersonsResult = doInDatabase(
                 connectionFactory,
                 withinTransaction(
                         insertPersons(
@@ -52,7 +52,7 @@ public class Main {
                         objects -> LOGGER.info("Inserted rows: " + Arrays.toString(objects)),
                         Main::logError);
 
-        final Either<List<Person>, SQLException> selectAllPersonsResult =
+        Either<List<Person>, SQLException> selectAllPersonsResult =
                 doInDatabase(
                         connectionFactory,
                         selectAllPersons());
@@ -61,7 +61,7 @@ public class Main {
                 Main::logError);
 
 
-        final Either<Person, SQLException> selectPersonWithId1Result = doInDatabase(connectionFactory, selectPersonWithId(1));
+        Either<Person, SQLException> selectPersonWithId1Result = doInDatabase(connectionFactory, selectPersonWithId(1));
         selectPersonWithId1Result.handleResult(
                 person -> LOGGER.info("Person with Id 1 selected: " + person),
                 Main::logError);
