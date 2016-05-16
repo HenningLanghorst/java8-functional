@@ -9,6 +9,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -85,6 +86,20 @@ public final class DatabaseOperations {
         }
     }
 
+    public static Function<Connection, int[]> multipleDatabaseUpdates(final Collection< Function<Connection, PreparedStatement>> preparedStatementFactories) {
+        return connection -> performUpdatesOnConnection(connection, preparedStatementFactories);
+    }
+
+    private static int[] performUpdatesOnConnection(final Connection connection, final Collection<Function<Connection, PreparedStatement>> preparedStatementFactories) throws SQLException {
+        int[] result = new int[preparedStatementFactories.size()];
+        int currentIndex = 0;
+        for (Function<Connection, PreparedStatement> f : preparedStatementFactories){
+            result[currentIndex++] = performUpdateOnConnection(connection, f);
+        }
+        return result;
+    }
+
+
 
     /**
      * Returns a function creating a {@link PreparedStatement} with the given SQL statement from a {@link Connection}.
@@ -117,5 +132,42 @@ public final class DatabaseOperations {
         return preparedStatement;
     }
 
+
+    /**
+     * Performs the given database operation within a transaction.
+     *
+     * @param databaseOperation Operation to be performed within a transaction.
+     * @param <T>               Type of the result of the database operation.
+     * @return A function performing transaction handling around the given function.
+     */
+    public static <T> Function<Connection, T> withinTransaction(Function<Connection, T> databaseOperation) {
+        final Function<Connection, T> performWithinTransaction = connection1 -> performWithinTransaction(databaseOperation, connection1);
+        return connection -> preserveAutoCommit(connection, performWithinTransaction);
+    }
+
+    private static <T> T performWithinTransaction(final Function<Connection, T> databaseOperation, final Connection connection) throws SQLException {
+        try {
+            final T result = databaseOperation.apply(connection);
+            connection.commit();
+            return result;
+        } catch (SQLException e) {
+            connection.rollback();
+            throw e;
+        }
+    }
+
+    private static <T> T preserveAutoCommit(Connection connection, Function<Connection, T> actualOperation) throws SQLException {
+        final boolean autoCommitInitiallyEnabled = connection.getAutoCommit();
+        if (autoCommitInitiallyEnabled) {
+            connection.setAutoCommit(false);
+        }
+        final T result = actualOperation.apply(connection);
+
+        if (autoCommitInitiallyEnabled) {
+            connection.setAutoCommit(true);
+        }
+
+        return result;
+    }
 
 }
