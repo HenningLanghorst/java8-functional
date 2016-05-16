@@ -7,6 +7,7 @@ import java.sql.SQLException;
  *
  * @author Henning Langhorst
  */
+@FunctionalInterface
 public interface Function<T, R> {
     R apply(T t) throws SQLException;
 
