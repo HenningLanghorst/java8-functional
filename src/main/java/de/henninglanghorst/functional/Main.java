@@ -8,11 +8,14 @@ import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.Month;
 import java.util.Arrays;
 import java.util.List;
 
 import static de.henninglanghorst.functional.PersonDbFunctions.*;
 import static de.henninglanghorst.functional.sql.DatabaseOperations.doInDatabase;
+import static de.henninglanghorst.functional.sql.DatabaseTransactionFunctions.withinTransaction;
 import static java.util.stream.Collectors.joining;
 
 /**
@@ -37,7 +40,12 @@ public class Main {
         doInDatabase(connectionFactory, createTablePerson())
                 .handleResult(objects -> LOGGER.info("Success " + objects), Main::logError);
 
-        doInDatabase(connectionFactory, insertPersons())
+        doInDatabase(connectionFactory,
+                withinTransaction(
+                        insertPersons(
+                                new Person(1, "Carl", "Carlsson", LocalDate.of(1972, Month.APRIL, 2)),
+                                new Person(2, "Lenny", "Leonard", LocalDate.of(1981, Month.APRIL, 2))
+                        )))
                 .handleResult(
                         objects -> LOGGER.info("Inserted rows: " + Arrays.toString(objects)),
                         Main::logError);
