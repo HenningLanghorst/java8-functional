@@ -7,7 +7,8 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 /**
- * Class providing functions for transaction handling, usable with {@link DatabaseOperations#doInDatabase(Supplier, Function)}.
+ * Class providing functions for transaction handling, usable with
+ * {@link DatabaseOperations#doInDatabase(Supplier, Function)}.
  *
  * @author Henning Langhorst
  */
@@ -24,11 +25,13 @@ public final class DatabaseTransactionFunctions {
      * @return A function performing transaction handling around the given function.
      */
     public static <T> Function<Connection, T> withinTransaction(Function<Connection, T> databaseOperation) {
-        final Function<Connection, T> performWithinTransaction = connection1 -> performWithinTransaction(databaseOperation, connection1);
+        final Function<Connection, T> performWithinTransaction =
+                connection -> performWithinTransaction(databaseOperation, connection);
         return connection -> preserveAutoCommit(connection, performWithinTransaction);
     }
 
-    private static <T> T performWithinTransaction(final Function<Connection, T> databaseOperation, final Connection connection) throws SQLException {
+    private static <T> T performWithinTransaction(final Function<Connection, T> databaseOperation,
+                                                  final Connection connection) throws SQLException {
         try {
             final T result = databaseOperation.apply(connection);
             connection.commit();
@@ -39,7 +42,8 @@ public final class DatabaseTransactionFunctions {
         }
     }
 
-    private static <T> T preserveAutoCommit(Connection connection, Function<Connection, T> actualOperation) throws SQLException {
+    private static <T> T preserveAutoCommit(final Connection connection,
+                                            final Function<Connection, T> actualOperation) throws SQLException {
         final boolean autoCommitInitiallyEnabled = connection.getAutoCommit();
         if (autoCommitInitiallyEnabled) {
             connection.setAutoCommit(false);
