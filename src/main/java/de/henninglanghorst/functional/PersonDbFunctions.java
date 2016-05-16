@@ -3,18 +3,15 @@ package de.henninglanghorst.functional;
 import de.henninglanghorst.functional.model.Person;
 import de.henninglanghorst.functional.sql.function.Function;
 
-import java.sql.Connection;
-import java.sql.Date;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.List;
+import java.util.stream.Stream;
 
 import static de.henninglanghorst.functional.sql.DatabaseOperations.statement;
 import static de.henninglanghorst.functional.sql.DatabaseQueryFunctions.*;
-import static de.henninglanghorst.functional.sql.DatabaseTransactionFunctions.withinTransaction;
 import static de.henninglanghorst.functional.sql.DatabaseUpdateFunctions.databaseUpdate;
 import static de.henninglanghorst.functional.sql.DatabaseUpdateFunctions.multipleDatabaseUpdates;
-import static java.util.Arrays.asList;
+import static java.util.stream.Collectors.toList;
 
 /**
  * Contains database functions relating to database table {@code Person}.
@@ -37,16 +34,20 @@ public final class PersonDbFunctions {
                         "lastName varchar2, birthday date)"));
     }
 
-    public static Function<Connection, int[]> insertPersons() {
-        return withinTransaction(
+    public static Function<Connection, int[]> insertPersons(Person... persons) {
+        return
                 multipleDatabaseUpdates(
-                        asList(
-                                statement(
-                                        "insert into Person values (?, ?, ?, ?);",
-                                        1, "Carl", "Carlsson", Date.valueOf("1972-04-02")),
-                                statement("insert into Person values (?, ?, ?, ?);",
-                                        2, "Lenny", "Leonard", Date.valueOf("1981-04-02")))
-                ));
+                        Stream.of(persons)
+                                .map(PersonDbFunctions::mapPersonToInsertStatement)
+                                .collect(toList()));
+    }
+
+    private static Function<Connection, PreparedStatement> mapPersonToInsertStatement(final Person person) {
+        return statement("insert into Person values (?, ?, ?, ?);",
+                person.getId(),
+                person.getFirstName(),
+                person.getLastName(),
+                Date.valueOf(person.getBirthday()));
     }
 
     public static Function<Connection, List<Person>> selectAllPersons() {
