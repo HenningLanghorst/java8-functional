@@ -5,6 +5,8 @@ import de.henninglanghorst.functional.sql.function.Function;
 
 import java.sql.Connection;
 import java.sql.Date;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 
 import static de.henninglanghorst.functional.sql.DatabaseOperations.*;
@@ -47,21 +49,21 @@ public final class PersonDbFunctions {
     public static Function<Connection, List<Person>> selectAllPersons() {
         return databaseQuery(
                 statement("select * from Person"),
-                resultSet -> new Person(
-                        resultSet.getInt("id"),
-                        resultSet.getString("firstName"),
-                        resultSet.getString("lastName"),
-                        resultSet.getDate("birthday").toLocalDate()));
+                PersonDbFunctions::mapResultSetToPerson);
     }
 
     public static Function<Connection, Person> selectPersonWithId(int id) {
         return databaseQuerySingleRow(
                 statement("select * from Person where id = ?", id),
-                resultSet -> new Person(
-                        resultSet.getInt("id"),
-                        resultSet.getString("firstName"),
-                        resultSet.getString("lastName"),
-                        resultSet.getDate("birthday").toLocalDate()));
+                PersonDbFunctions::mapResultSetToPerson);
+    }
+
+    private static Person mapResultSetToPerson(final ResultSet resultSet) throws SQLException {
+        return new Person(
+                resultSet.getInt("id"),
+                resultSet.getString("firstName"),
+                resultSet.getString("lastName"),
+                resultSet.getDate("birthday").toLocalDate());
     }
 
 
