@@ -17,7 +17,7 @@ import static de.henninglanghorst.functional.sql.DatabaseUpdateFunctions.multipl
 import static java.util.Arrays.asList;
 
 /**
- * Contains database function relating to database table {@code Person}.
+ * Contains database functions relating to database table {@code Person}.
  *
  * @author Henning Langhorst
  */
