@@ -1,5 +1,6 @@
 package de.henninglanghorst.functional.util;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 
@@ -66,6 +67,19 @@ public abstract class Either<A, B> {
         public String toString() {
             return "Left(" + value + ")";
         }
+
+        @Override
+        public boolean equals(final Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            final Left<?, ?> left = (Left<?, ?>) o;
+            return Objects.equals(value, left.value);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(value);
+        }
     }
 
     private static class Right<A, B> extends Either<A, B> {
@@ -106,6 +120,18 @@ public abstract class Either<A, B> {
             return "Right(" + value + ")";
         }
 
+        @Override
+        public boolean equals(final Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            final Right<?, ?> right = (Right<?, ?>) o;
+            return Objects.equals(value, right.value);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(value);
+        }
     }
 
 }
