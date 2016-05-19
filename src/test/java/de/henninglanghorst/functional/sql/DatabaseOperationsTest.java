@@ -15,6 +15,7 @@ import java.sql.SQLException;
 
 import static de.henninglanghorst.functional.sql.DatabaseOperations.doInDatabase;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.verify;
 
 /**
  * Tests class {@link DatabaseOperations}.
@@ -63,5 +64,33 @@ public class DatabaseOperationsTest {
         assertThat(result).isEqualTo(Either.right(exceptionToBeThrown));
     }
 
+    @Test
+    public void shouldCloseConnectionAfterNormalExecution() throws Exception {
+        // given
+        final Supplier<Connection> connectionSupplier = () -> connection;
+        final Function<Connection, String> connectionFunction = c -> "DB result";
+
+        // when
+        doInDatabase(connectionSupplier, connectionFunction);
+
+        // then
+        verify(connection).close();
+    }
+
+
+    @Test
+    public void shouldCloseConnectionAfterExecutionWithException() throws Exception {
+        // given
+        final Supplier<Connection> connectionSupplier = () -> connection;
+        final Function<Connection, String> connectionFunction = c -> {
+            throw new SQLException("Test");
+        };
+
+        // when
+        doInDatabase(connectionSupplier, connectionFunction);
+
+        // then
+        verify(connection).close();
+    }
 
 }
