@@ -8,7 +8,7 @@ import java.sql.SQLException;
 
 /**
  * Class providing functions for transaction handling, usable with
- * {@link DatabaseOperations#doInDatabase(Supplier, Function)}.
+ * {@link DatabaseOperationFunctions#doInDatabase(Supplier, Function)}.
  *
  * @author Henning Langhorst
  */

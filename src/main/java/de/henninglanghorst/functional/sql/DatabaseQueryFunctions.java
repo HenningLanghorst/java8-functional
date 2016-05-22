@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Class providing functions for SQL queries, usable with {@link DatabaseOperations#doInDatabase(Supplier, Function)}.
+ * Class providing functions for SQL queries, usable with {@link DatabaseOperationFunctions#doInDatabase(Supplier, Function)}.
  *
  * @author Henning Langhorst
  */
@@ -22,7 +22,7 @@ public final class DatabaseQueryFunctions {
 
     /**
      * Returns a function which performs a SQL query on the database for use in
-     * {@link DatabaseOperations#doInDatabase(Supplier, Function)}.
+     * {@link DatabaseOperationFunctions#doInDatabase(Supplier, Function)}.
      *
      * @param prepStmtFactory Creates the select statement using the given {@link Connection}.
      * @param resultSetExtraction      Function extracting data from {@link ResultSet}.

@@ -7,8 +7,8 @@ import java.sql.*;
 import java.util.List;
 import java.util.stream.Stream;
 
-import static de.henninglanghorst.functional.sql.DatabaseOperations.statement;
 import static de.henninglanghorst.functional.sql.DatabaseQueryFunctions.*;
+import static de.henninglanghorst.functional.sql.DatabaseStatementFunctions.statement;
 import static de.henninglanghorst.functional.sql.DatabaseUpdateFunctions.databaseUpdate;
 import static de.henninglanghorst.functional.sql.DatabaseUpdateFunctions.multipleDatabaseUpdates;
 import static java.util.stream.Collectors.toList;

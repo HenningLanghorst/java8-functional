@@ -15,7 +15,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static de.henninglanghorst.functional.PersonDbFunctions.*;
-import static de.henninglanghorst.functional.sql.DatabaseOperations.doInDatabase;
+import static de.henninglanghorst.functional.sql.DatabaseOperationFunctions.doInDatabase;
 import static de.henninglanghorst.functional.sql.DatabaseTransactionFunctions.withinTransaction;
 import static java.util.stream.Collectors.joining;
 

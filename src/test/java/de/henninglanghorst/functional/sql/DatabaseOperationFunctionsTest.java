@@ -13,16 +13,16 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-import static de.henninglanghorst.functional.sql.DatabaseOperations.doInDatabase;
+import static de.henninglanghorst.functional.sql.DatabaseOperationFunctions.doInDatabase;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 
 /**
- * Tests class {@link DatabaseOperations}.
+ * Tests class {@link DatabaseOperationFunctions}.
  *
  * @author Henning Langhorst
  */
-public class DatabaseOperationsTest {
+public class DatabaseOperationFunctionsTest {
 
     @Rule
     public MockitoRule mockitoRule = MockitoJUnit.rule();

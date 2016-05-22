@@ -10,7 +10,7 @@ import java.util.Collection;
 
 /**
  * Class providing functions for updating database tables, usable with
- * {@link DatabaseOperations#doInDatabase(Supplier, Function)}.
+ * {@link DatabaseOperationFunctions#doInDatabase(Supplier, Function)}.
  *
  * @author Henning Langhorst
  */
