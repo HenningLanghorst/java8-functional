@@ -1,6 +1,6 @@
-package de.henninglanghorst.functional;
+package de.henninglanghorst.functional.example;
 
-import de.henninglanghorst.functional.model.Person;
+import de.henninglanghorst.functional.example.model.Person;
 import de.henninglanghorst.functional.sql.function.Supplier;
 import de.henninglanghorst.functional.util.Either;
 import org.h2.jdbcx.JdbcConnectionPool;
@@ -14,7 +14,7 @@ import java.time.Month;
 import java.util.Arrays;
 import java.util.List;
 
-import static de.henninglanghorst.functional.PersonDbFunctions.*;
+import static de.henninglanghorst.functional.example.PersonDbFunctions.*;
 import static de.henninglanghorst.functional.sql.DatabaseOperationFunctions.doInDatabase;
 import static de.henninglanghorst.functional.sql.DatabaseTransactionFunctions.withinTransaction;
 import static java.util.stream.Collectors.joining;

@@ -2,6 +2,7 @@ group 'de.henning-langhorst'
 version '1.0-SNAPSHOT'
 
 apply plugin: 'java'
+apply plugin: 'maven'
 
 sourceCompatibility = 1.8
 
@@ -19,4 +20,6 @@ dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
     testCompile group: 'org.mockito', name: 'mockito-all', version: '1.10.19'
     testCompile group: 'org.assertj', name: 'assertj-core', version: '3.4.1'
+
+    compileOnly group: 'org.projectlombok', name: 'lombok', version: '1.16.8'
 }

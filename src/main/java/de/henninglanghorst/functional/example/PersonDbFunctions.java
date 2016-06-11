@@ -1,7 +1,8 @@
-package de.henninglanghorst.functional;
+package de.henninglanghorst.functional.example;
 
-import de.henninglanghorst.functional.model.Person;
+import de.henninglanghorst.functional.example.model.Person;
 import de.henninglanghorst.functional.sql.function.Function;
+import lombok.Data;
 
 import java.sql.*;
 import java.util.List;
@@ -18,6 +19,7 @@ import static java.util.stream.Collectors.toList;
  *
  * @author Henning Langhorst
  */
+@Data
 public final class PersonDbFunctions {
 
     private PersonDbFunctions() {
