@@ -36,10 +36,10 @@ public class Main {
         Supplier<Connection> connectionFactory = connectionPool::getConnection;
 
         Either<Integer, SQLException> dropTableResult = doInDatabase(connectionFactory, dropTablePerson());
-        dropTableResult.handleResult(objects -> LOGGER.info("Success " + objects), Main::logError);
+        dropTableResult.handle(objects -> LOGGER.info("Success " + objects), Main::logError);
 
         Either<Integer, SQLException> createTableResult = doInDatabase(connectionFactory, createTablePerson());
-        createTableResult.handleResult(objects -> LOGGER.info("Success " + objects), Main::logError);
+        createTableResult.handle(objects -> LOGGER.info("Success " + objects), Main::logError);
 
         Either<int[], SQLException> insertPersonsResult = doInDatabase(
                 connectionFactory,
@@ -48,7 +48,7 @@ public class Main {
                                 new Person(1, "Carl", "Carlsson", LocalDate.of(1972, Month.APRIL, 2)),
                                 new Person(2, "Lenny", "Leonard", LocalDate.of(1981, Month.APRIL, 2))
                         )));
-        insertPersonsResult.handleResult(
+        insertPersonsResult.handle(
                         objects -> LOGGER.info("Inserted rows: " + Arrays.toString(objects)),
                         Main::logError);
 
@@ -56,13 +56,13 @@ public class Main {
                 doInDatabase(
                         connectionFactory,
                         selectAllPersons());
-        selectAllPersonsResult.handleResult(
+        selectAllPersonsResult.handle(
                 persons -> LOGGER.info("All Persons selected:" + listToString(persons)),
                 Main::logError);
 
 
         Either<Person, SQLException> selectPersonWithId1Result = doInDatabase(connectionFactory, selectPersonWithId(1));
-        selectPersonWithId1Result.handleResult(
+        selectPersonWithId1Result.handle(
                 person -> LOGGER.info("Person with Id 1 selected: " + person),
                 Main::logError);
 

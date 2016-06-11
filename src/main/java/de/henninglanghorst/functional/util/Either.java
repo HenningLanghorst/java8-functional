@@ -28,7 +28,7 @@ public abstract class Either<A, B> {
 
     public abstract Optional<B> right();
 
-    public abstract void handleResult(Consumer<A> leftConsumer, Consumer<B> rightConsumer);
+    public abstract void handle(Consumer<A> leftConsumer, Consumer<B> rightConsumer);
 
     private static class Left<A, B> extends Either<A, B> {
 
@@ -59,7 +59,7 @@ public abstract class Either<A, B> {
         }
 
         @Override
-        public void handleResult(final Consumer<A> leftConsumer, final Consumer<B> rightConsumer) {
+        public void handle(final Consumer<A> leftConsumer, final Consumer<B> rightConsumer) {
             leftConsumer.accept(value);
         }
 
@@ -111,7 +111,7 @@ public abstract class Either<A, B> {
         }
 
         @Override
-        public void handleResult(final Consumer<A> leftConsumer, final Consumer<B> rightConsumer) {
+        public void handle(final Consumer<A> leftConsumer, final Consumer<B> rightConsumer) {
             rightConsumer.accept(value);
         }
 

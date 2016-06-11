@@ -42,7 +42,7 @@ public class EitherTest {
     @Test
     public void leftConsumerShouldBeInvokedOnLeftValue() throws Exception {
         final Either<Integer, String> left = Either.left(2);
-        left.handleResult(integerConsumer, stringConsumer);
+        left.handle(integerConsumer, stringConsumer);
         verify(integerConsumer).accept(2);
         verifyZeroInteractions(stringConsumer);
     }
@@ -57,7 +57,7 @@ public class EitherTest {
     @Test
     public void rightConsumerShouldBeInvokedOnRightValue() throws Exception {
         final Either<Integer, String> right = Either.right("Hallo");
-        right.handleResult(integerConsumer, stringConsumer);
+        right.handle(integerConsumer, stringConsumer);
         verifyZeroInteractions(integerConsumer);
         verify(stringConsumer).accept("Hallo");
     }
