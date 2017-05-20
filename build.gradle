@@ -28,5 +28,5 @@ dependencies {
     testCompile group: 'org.mockito', name: 'mockito-all', version: '1.10.19'
     testCompile group: 'org.assertj', name: 'assertj-core', version: '3.4.1'
 
-    compileOnly group: 'org.projectlombok', name: 'lombok', version: '1.16.8'
+    compileOnly group: 'org.projectlombok', name: 'lombok', version: '1.16.16'
 }
