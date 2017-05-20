@@ -28,6 +28,9 @@ public class Main {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
 
+    private Main() {
+        // prevent instantiation
+    }
 
     public static void main(String[] args) {
 
@@ -49,8 +52,8 @@ public class Main {
                                 new Person(2, "Lenny", "Leonard", LocalDate.of(1981, Month.APRIL, 2))
                         )));
         insertPersonsResult.handle(
-                        objects -> LOGGER.info("Inserted rows: " + Arrays.toString(objects)),
-                        Main::logError);
+                objects -> LOGGER.info("Inserted rows: " + Arrays.toString(objects)),
+                Main::logError);
 
         Either<List<Person>, SQLException> selectAllPersonsResult =
                 doInDatabase(

@@ -13,6 +13,10 @@ import java.sql.SQLException;
  */
 public class DatabaseStatementFunctions {
 
+    private DatabaseStatementFunctions() {
+        // prevent instantiation
+    }
+
     /**
      * Returns a function creating a {@link PreparedStatement} with the given SQL statement from a {@link Connection}.
      *
